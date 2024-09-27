@@ -17,7 +17,7 @@ int rangeSum(vector<int> &tree, int l, int r) {
 }
 
 void update(vector<int> &tree, int k, int x) {
-    while (k <= tree.size()) {
+    while (k < tree.size()) {
         tree[k] += x;
         k += k & -k;
     }
