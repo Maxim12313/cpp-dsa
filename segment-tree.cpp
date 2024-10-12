@@ -3,53 +3,53 @@
 
 using namespace std;
 
-int merge(int a, int b, vector<int> &data, int mid) {
-    if (mid == data.size() - 1)
-        return a;
+template <typename T> struct SegTree {
+    vector<T> tree;
+    T init = 0;
 
-    if (data[mid] != data[mid + 1])
+    SegTree(vector<T> &nums) {
+        tree.resize(4 * nums.size(), 0);
+        build(tree);
+    }
+
+    T combine(T a, T b) {
         return a + b;
-
-    return max(a, b);
-}
-
-void build(vector<int> &tree, vector<int> &data, int node, int lo, int hi) {
-    if (lo == hi) {
-        tree[node] = data[lo];
-        return;
     }
-    int mid = hi + (lo - hi) / 2;
-    build(tree, data, 2 * node + 1, lo, mid);
-    build(tree, data, 2 * node + 2, mid + 1, hi);
-    tree[node] = merge(tree[2 * node + 1], tree[2 * node + 2], data, mid);
-}
 
-int query(vector<int> &tree, vector<int> &data, int node, int lo, int hi,
-          int outerLo, int outerHi) {
-    if (outerHi < lo || hi < outerLo)
-        return 0;
-
-    if (outerLo <= lo && hi <= outerHi)
-        return tree[node];
-
-    int mid = lo + (hi - lo) / 2;
-    int a = query(tree, data, 2 * node + 1, lo, mid, outerLo, outerHi);
-    int b = query(tree, data, 2 * node + 2, mid + 1, hi, outerLo, outerHi);
-    return merge(a, b, data, mid);
-}
-
-void update(vector<int> &tree, vector<int> &data, int node, int lo, int hi,
-            int newVal, int idx) {
-    if (lo == hi) {
-        tree[node] = newVal;
-        return;
+    void build(vector<T> &nums, int l, int r, int k) {
+        if (l == r) {
+            tree[k] = nums[l];
+            return;
+        }
+        int m = l + (r - l) / 2;
+        build(nums, l, m, 2 * k + 1);
+        build(nums, m + 1, r, 2 * k + 2);
+        tree[k] = combine(tree[2 * k + 1], tree[2 * k + 2]);
     }
-    int mid = lo + (hi - lo) / 2;
 
-    if (idx <= mid)
-        update(tree, data, 2 * node + 1, lo, mid, newVal, idx);
-    else
-        update(tree, data, 2 * node + 2, mid + 1, hi, newVal, idx);
+    T query(T l, T r, T k, T outerL, T outerR) {
+        if (r < outerL || outerR < l)
+            return init;
 
-    tree[node] = merge(tree[2 * node + 1], tree[2 * node + 2], data, mid);
-}
+        if (outerL <= l && r <= outerR)
+            return tree[k];
+
+        int m = l + (r - l) / 2;
+        return combine(query(l, m, 2 * k + 1, outerL, outerR),
+                       query(m + 1, r, 2 * k + 2, outerL, outerR));
+    }
+
+    void update(T l, T r, T k, int idx, T val) {
+        if (l == r) {
+            tree[k] = val;
+            return;
+        }
+        int m = l + (r - l) / 2;
+        if (idx <= m)
+            update(l, m, 2 * k + 1, idx, val);
+        else
+            update(m + 1, r, 2 * k + 2, idx, val);
+
+        tree[k] = combine(tree[2 * k + 1], tree[2 * k + 2]);
+    }
+};
