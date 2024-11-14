@@ -73,27 +73,27 @@ int getLca(int u, int v) {
     return up[u][0];
 }
 
-void solve() {
+// concise if just need get Kth
+void getKthUsage() {
     int n, q;
     cin >> n >> q;
-    // going to children
-    vector<vector<int>> adjList(n);
-    for (int i = 1; i < n; i++) {
-        int a;
-        cin >> a;
-        adjList[--a].push_back(i);
-    }
+    int POW = ceil(log2(n));
+    vector<vector<int>> up(n + 1, vector<int>(POW + 1, 0));
+    for (int i = 2; i <= n; i++)
+        cin >> up[i][0];
 
-    processAncestor(adjList, 0);
+    // if 0, then goes to garbage 0
+    for (int pow = 1; pow <= POW; pow++)
+        for (int u = 1; u <= n; u++)
+            up[u][pow] = up[up[u][pow - 1]][pow - 1];
 
     while (q--) {
         int u, k;
         cin >> u >> k;
-        u--;
-        int res = getKth(u, k);
-        if (res != -1)
-            res++;
-        cout << res << "\n";
+        for (int pow = POW; pow >= 0 && u != -1; pow--)
+            if (k & (1 << pow))
+                u = up[u][pow];
+        cout << (u ? u : -1) << "\n";
     }
 }
 
@@ -101,5 +101,4 @@ int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
     cout.tie(nullptr);
-    solve();
 }
