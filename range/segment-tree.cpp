@@ -1,17 +1,18 @@
-#include <iostream>
 #include <vector>
 
 using namespace std;
 
-template <typename T> struct SegTree {
+template <typename T> class SegmentTree {
+public:
     vector<T> tree;
     T init = 0;
 
-    SegTree(vector<T> &nums) {
+    SegmentTree(vector<T> &nums) {
         tree.resize(4 * nums.size(), 0);
         build(tree);
     }
 
+    // edit this
     T combine(T a, T b) {
         return a + b;
     }
