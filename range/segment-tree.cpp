@@ -1,22 +1,32 @@
+#include <iostream>
 #include <vector>
 
 using namespace std;
 
 template <typename T> class SegmentTree {
 public:
+    int n;
     vector<T> tree;
-    T init = 0;
+    T init = T(0); // initial value
 
-    SegmentTree(vector<T> &nums) {
-        tree.resize(4 * nums.size(), 0);
-        build(tree);
+    SegmentTree(vector<T> &nums) : n(size(nums)) {
+        tree.resize(4 * n, init);
+        build(nums, 0, n - 1, 0);
     }
 
-    // edit this
     T combine(T a, T b) {
-        return a + b;
+        return max(a, b);
     }
 
+    T query(int l, int r) {
+        return query(0, n - 1, 0, l, r);
+    }
+
+    void update(int idx, T val) {
+        update(0, n - 1, 0, idx, val);
+    }
+
+private:
     void build(vector<T> &nums, int l, int r, int k) {
         if (l == r) {
             tree[k] = nums[l];
@@ -28,7 +38,7 @@ public:
         tree[k] = combine(tree[2 * k + 1], tree[2 * k + 2]);
     }
 
-    T query(T l, T r, T k, T outerL, T outerR) {
+    T query(int l, int r, int k, int outerL, int outerR) {
         if (r < outerL || outerR < l)
             return init;
 
@@ -40,7 +50,7 @@ public:
                        query(m + 1, r, 2 * k + 2, outerL, outerR));
     }
 
-    void update(T l, T r, T k, int idx, T val) {
+    void update(int l, int r, int k, int idx, T val) {
         if (l == r) {
             tree[k] = val;
             return;
