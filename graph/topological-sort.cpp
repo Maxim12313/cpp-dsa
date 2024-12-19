@@ -19,7 +19,6 @@
 
 using namespace std;
 
-// acyclic?
 void dfsSort(vector<vector<int>> &adjList, int curr, vector<int> &ordering,
              vector<bool> &visited) {
     if (visited[curr])
