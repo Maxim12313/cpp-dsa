@@ -8,14 +8,23 @@ public:
     int n;
     vector<T> tree;
     T init = T(0); // initial value
+    function<T(T, T)> combine = [](T a, T b) { return max(a, b); };
 
-    SegmentTree(vector<T> &nums) : n(size(nums)) {
+    SegmentTree(vector<T> &nums, T init, function<T(T, T)> combine)
+        : n(int(size(nums))), init(init), combine(combine) {
         tree.resize(4 * n, init);
         build(nums, 0, n - 1, 0);
     }
 
-    T combine(T a, T b) {
-        return max(a, b);
+    SegmentTree(vector<T> &nums, function<T(T, T)> combine)
+        : n(int(size(nums))), combine(combine) {
+        tree.resize(4 * n, init);
+        build(nums, 0, n - 1, 0);
+    }
+
+    SegmentTree(vector<T> &nums) : n(int(size(nums))) {
+        tree.resize(4 * n, init);
+        build(nums, 0, n - 1, 0);
     }
 
     T query(int l, int r) {
