@@ -8,10 +8,14 @@ public:
     multiset<T, greater<T>> low; // non increasing
     multiset<T> high;            // non decreasing
 
+    int size() {
+        return low.size() + high.size();
+    }
+
     // assuming choose lower for even median
     T median() {
-        assert(size(low) + size(high) > 0);
-        if (size(low) >= size(high))
+        assert(size() > 0);
+        if (low.size() >= high.size())
             return *begin(low);
         return *begin(high);
     }
@@ -19,7 +23,7 @@ public:
     // low has extra if odd
     void push(T val) {
         val = balance(val);
-        if (size(low) <= size(high))
+        if (low.size() <= high.size())
             low.insert(val);
         else
             high.insert(val);
