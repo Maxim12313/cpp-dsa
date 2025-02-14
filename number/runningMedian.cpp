@@ -62,11 +62,11 @@ private:
 
     // rebalance after erase
     void rebalance() {
-        if (size(low) < size(high)) {
+        if (low.size() < high.size()) {
             auto it = begin(high);
             low.insert(*it);
             high.erase(it);
-        } else if (size(low) > size(high) + 1) {
+        } else if (low.size() > high.size() + 1) {
             auto it = begin(low);
             high.insert(*it);
             low.erase(it);
